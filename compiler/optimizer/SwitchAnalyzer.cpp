@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corp. and others
+ * Copyright (c) 2000, 2020 IBM Corp. and others
  *
  * This program and the accompanying materials are made available under
  * the terms of the Eclipse Public License 2.0 which accompanies this
@@ -50,7 +50,7 @@
 
 #define ADD_BRANCH_TABLE_ADDRESS
 
-#define OPT_DETAILS "O^O SWITCH ANALYZER: "
+#define OPT_DETAILS "O^O SWITCH ANALYZER: " 
 
 TR::SwitchAnalyzer::SwitchAnalyzer(TR::OptimizationManager *manager)
    : TR::Optimization(manager)
@@ -1239,8 +1239,6 @@ TR::Block *TR::SwitchAnalyzer::addIfBlock(TR::ILOpCodes opCode, CASECONST_TYPE v
    _cfg->addEdge(newBlock, dest->getNode()->getBlock());
    _cfg->addEdge(newBlock, _nextBlock);
 
-
-
    _block->getExit()->join(newBlock->getEntry());
    newBlock->getExit()->join(_nextBlock->getEntry());
 
@@ -1257,11 +1255,7 @@ TR::Block *TR::SwitchAnalyzer::addTableBlock(SwitchInfo *dense)
 
    CASECONST_TYPE upperBound = dense->_max - dense->_min;
 
-   TR::SymbolReference *branchTableSymRef = NULL;
-
-   int32_t branchTable = 0;
-
-   TR::Node *node = TR::Node::create(_switch, TR::table, 3 + upperBound + branchTable);
+   TR::Node *node = TR::Node::create(_switch, TR::table, 3 + upperBound);
    if(_switch && _switch->chkCannotOverflow())
      node->setCannotOverflow(true); // Pass on info to code gen that table will have all cases covered and not use default case
 
@@ -1282,7 +1276,6 @@ TR::Block *TR::SwitchAnalyzer::addTableBlock(SwitchInfo *dense)
 
    _block->getExit()->join(newBlock->getEntry());
    newBlock->getExit()->join(_nextBlock->getEntry());
-
 
    SwitchInfo *currentInfo = dense->_chain->getFirst();
    for (int32_t caseIndex = 0;
@@ -1305,11 +1298,6 @@ TR::Block *TR::SwitchAnalyzer::addTableBlock(SwitchInfo *dense)
          dest = _defaultDest;
 
       node->setAndIncChild(2 + caseIndex, TR::Node::createCase(_switch, dest, caseIndex));
-      }
-
-   if (branchTable)
-      {
-      node->setAndIncChild(2 + upperBound + 1, TR::Node::createWithSymRef(_switch, TR::loadaddr, 0, branchTableSymRef));
       }
 
    _nextBlock = newBlock;
