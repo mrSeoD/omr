@@ -1257,8 +1257,6 @@ TR::Block *TR::SwitchAnalyzer::addTableBlock(SwitchInfo *dense)
 
    CASECONST_TYPE upperBound = dense->_max - dense->_min;
 
-   TR::SymbolReference *branchTableSymRef = NULL;
-
    int32_t branchTable = 0;
 
    TR::Node *node = TR::Node::create(_switch, TR::table, 3 + upperBound + branchTable);
@@ -1305,11 +1303,6 @@ TR::Block *TR::SwitchAnalyzer::addTableBlock(SwitchInfo *dense)
          dest = _defaultDest;
 
       node->setAndIncChild(2 + caseIndex, TR::Node::createCase(_switch, dest, caseIndex));
-      }
-
-   if (branchTable)
-      {
-      node->setAndIncChild(2 + upperBound + 1, TR::Node::createWithSymRef(_switch, TR::loadaddr, 0, branchTableSymRef));
       }
 
    _nextBlock = newBlock;
